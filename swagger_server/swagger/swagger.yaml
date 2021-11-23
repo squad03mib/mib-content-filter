@@ -1,0 +1,161 @@
+openapi: 3.0.1
+info:
+  title: Content Filter Service API
+  description: Content Filter Microservice of Message in a Bottle Application
+  version: "0.1"
+servers:
+- url: /
+paths:
+  /users/{user_id}/content_filter:
+    get:
+      tags:
+      - Content Filter
+      description: Get the list of available content filters
+      operationId: mib_resources_users_get_content_filters_list
+      parameters:
+      - name: user_id
+        in: path
+        description: User Unique ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: Return the list of content filters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContentFilter'
+        default:
+          description: An error occured during retrieving the list of content filters
+      x-openapi-router-controller: swagger_server.controllers.content_filter_controller
+  /users/{user_id}/content_filter/{filter_id}:
+    get:
+      tags:
+      - Content Filter
+      description: Get the content filter
+      operationId: mib_resources_users_get_content_filter
+      parameters:
+      - name: user_id
+        in: path
+        description: User Unique ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          format: int64
+      - name: filter_id
+        in: path
+        description: Filter Unique ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: Return content filter info
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContentFilterInfo'
+        default:
+          description: An error occured during retrieving content filter info
+      x-openapi-router-controller: swagger_server.controllers.content_filter_controller
+    put:
+      tags:
+      - Content Filter
+      summary: Set the content filter flag to activate/disactivate it
+      operationId: mib_resources_users_set_content_filter
+      parameters:
+      - name: user_id
+        in: path
+        description: User Unique ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          format: int64
+      - name: filter_id
+        in: path
+        description: Filter Unique ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: Return content filter info
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContentFilterInfo'
+        default:
+          description: An error occured during setting content filter
+      x-openapi-router-controller: swagger_server.controllers.content_filter_controller
+components:
+  schemas:
+    ContentFilter:
+      required:
+      - filter_active
+      - filter_id
+      - filter_name
+      type: object
+      properties:
+        filter_id:
+          type: integer
+          description: id of content filter
+          example: 0
+        filter_name:
+          type: string
+          description: name of content filter
+          example: Default
+        filter_active:
+          type: boolean
+          description: status of the content filter
+          example: false
+      example:
+        filter_name: Default
+        filter_active: false
+        filter_id: 0
+    ContentFilterInfo:
+      required:
+      - filter_active
+      - filter_id
+      - filter_name
+      - filter_words
+      type: object
+      properties:
+        filter_id:
+          type: integer
+          description: id of content filter
+          example: 0
+        filter_name:
+          type: string
+          description: name of content filter
+          example: Default
+        filter_active:
+          type: boolean
+          description: status of the content filter
+          example: false
+        filter_words:
+          type: array
+          description: list of badwords
+          items:
+            example: "fuck, shit"
+      example:
+        filter_name: Default
+        filter_active: false
+        filter_id: 0
+        filter_words:
+        - "fuck, shit"
+        - "fuck, shit"
+
