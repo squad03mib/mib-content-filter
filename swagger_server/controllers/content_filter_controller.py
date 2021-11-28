@@ -1,8 +1,10 @@
 import connexion
 import six
+from flask import jsonify
 
 from swagger_server.models.content_filter import ContentFilter  # noqa: E501
 from swagger_server.models.content_filter_info import ContentFilterInfo  # noqa: E501
+from swagger_server.dao.content_filter_manager import ContentFilterManager
 from swagger_server import util
 
 
@@ -18,7 +20,8 @@ def mib_resources_users_get_content_filter(user_id, filter_id):  # noqa: E501
 
     :rtype: ContentFilterInfo
     """
-    return 'do some magic!'
+    response_object = ContentFilterManager.retrieve_by_id(user_id,filter_id)  
+    return jsonify(response_object.serialize())
 
 
 def mib_resources_users_get_content_filters_list(user_id):  # noqa: E501
@@ -31,7 +34,8 @@ def mib_resources_users_get_content_filters_list(user_id):  # noqa: E501
 
     :rtype: ContentFilter
     """
-    return 'do some magic!'
+    response_object = ContentFilterManager.retrieve_by_id(user_id)  
+    return jsonify(response_object.serialize())
 
 
 def mib_resources_users_set_content_filter(user_id, filter_id):  # noqa: E501

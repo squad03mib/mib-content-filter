@@ -5,13 +5,17 @@ from swagger_server.models_db.content_filter_db import ContentFilter
 class ContentFilterManager(Manager):
 
     @staticmethod
-    def create_lottery_info(content_filter: ContentFilter):
+    def create_content_filter(content_filter: ContentFilter):
         Manager.create(content_filter=content_filter)
 
     @staticmethod
     def retrieve_by_id(id_):
         Manager.check_none(id=id_)
         return ContentFilter.query.get(id_)
+
+    def retrieve_by_user_id(user_id):
+        Manager.check_none(user_id=user_id)
+        return ContentFilter.query.filter_by(user_id=user_id).all()
 
     @staticmethod
     def retrieve_name(id_):

@@ -1,16 +1,21 @@
-FROM python:3.9
+#
+# Docker file for Message in a Bottle v1.0
+#
+FROM python:3.8
+LABEL maintainer="<squa_id>_squad"
+LABEL version="1.0"
+LABEL description="Message in a Bottle User Microservice"
 
-RUN mkdir -p /usr/src/app
-WORKDIR /usr/src/app
-
-COPY requirements.txt /usr/src/app/
+# creating the environment
+COPY . /app
+# setting the workdir
+WORKDIR /app
 
 # installing all requirements
-RUN ["pip", "install", "-r", "requirements.txt"]
+RUN ["pip", "install", "-r", "requirements.prod.txt"]
 
-COPY . /usr/src/app
-
-EXPOSE 8080
+# exposing the port
+EXPOSE 5000/tcp
 
 # Main command
 CMD ["gunicorn", "--config", "gunicorn.conf.py", "wsgi:app"]

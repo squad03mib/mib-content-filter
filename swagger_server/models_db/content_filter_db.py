@@ -5,6 +5,9 @@ class ContentFilter(db.Model):
 
     __tablename__ = 'content_filter'
 
+    SERIALIZE_LIST = ['id', 'name', 'words',
+                      'private']
+
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.Unicode(128))
     words = db.Column(db.Unicode(128))
@@ -12,16 +15,18 @@ class ContentFilter(db.Model):
 
     def __init__(self, *args, **kw):
         super(ContentFilter, self).__init__(*args, **kw)
+    
+    def set_id(self, id):
+        self.id = id
 
+    def set_name(self, name):
+        self.name = name
 
-class UserContentFilter(db.Model):
+    def set_words(self, words):
+        self.words = words
 
-    __tablename__ = 'user_content_filter'
-
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    id_user = db.Column(db.Integer, ForeignKey('user.id'))
-    id_content_filter = db.Column(db.Integer, ForeignKey('content_filter.id'))
-    active = db.Column(db.Boolean, default=False)
-
-    def __init__(self, *args, **kw):
-        super(UserContentFilter, self).__init__(*args, **kw)
+    def set_private(self, private):
+        self.private = private
+    
+    def serialize(self):
+        return dict([(k, self.__getattribute__(k)) for k in self.SERIALIZE_LIST])

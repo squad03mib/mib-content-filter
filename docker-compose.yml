@@ -19,14 +19,14 @@ services:
   mib_content_filter:
     <<:
       # Building the image
-      &mib_lottery
+      &mib_content_filter
       image: "mib-content_filter:latest"
       build:
         context: .
         dockerfile: Dockerfile
 
     ports:
-      - "8080:8080"
+      - "5000:5000"
     env_file:
       - env_file
     environment:

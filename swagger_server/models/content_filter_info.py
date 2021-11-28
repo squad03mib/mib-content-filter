@@ -14,7 +14,8 @@ class ContentFilterInfo(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, filter_id: int=None, filter_name: str=None, filter_active: bool=None, filter_words: List[Object]=None):  # noqa: E501
+
+    def __init__(self, filter_id: int = None, filter_name: str = None, filter_active: bool = None, filter_words: List[str] = None):  # noqa: E501
         """ContentFilterInfo - a model defined in Swagger
 
         :param filter_id: The filter_id of this ContentFilterInfo.  # noqa: E501
@@ -24,13 +25,13 @@ class ContentFilterInfo(Model):
         :param filter_active: The filter_active of this ContentFilterInfo.  # noqa: E501
         :type filter_active: bool
         :param filter_words: The filter_words of this ContentFilterInfo.  # noqa: E501
-        :type filter_words: List[Object]
+        :type filter_words: List[str]
         """
         self.swagger_types = {
             'filter_id': int,
             'filter_name': str,
             'filter_active': bool,
-            'filter_words': List[Object]
+            'filter_words': List[str]
         }
 
         self.attribute_map = {
@@ -131,24 +132,24 @@ class ContentFilterInfo(Model):
         self._filter_active = filter_active
 
     @property
-    def filter_words(self) -> List[Object]:
+    def filter_words(self) -> List[str]:
         """Gets the filter_words of this ContentFilterInfo.
 
         list of badwords  # noqa: E501
 
         :return: The filter_words of this ContentFilterInfo.
-        :rtype: List[Object]
+        :rtype: List[str]
         """
         return self._filter_words
 
     @filter_words.setter
-    def filter_words(self, filter_words: List[Object]):
+    def filter_words(self, filter_words: List[str]):
         """Sets the filter_words of this ContentFilterInfo.
 
         list of badwords  # noqa: E501
 
         :param filter_words: The filter_words of this ContentFilterInfo.
-        :type filter_words: List[Object]
+        :type filter_words: List[str]
         """
         if filter_words is None:
             raise ValueError("Invalid value for `filter_words`, must not be `None`")  # noqa: E501
