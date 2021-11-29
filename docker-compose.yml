@@ -33,6 +33,21 @@ services:
       - POSTGRES_HOST=db
     depends_on:
       - db
+      - migration
+    
+  migrations:
+    #
+    # this service is used to apply migrations on db
+    #
+    <<: *mib_content_filter
+    command: flask db upgrade
+    env_file:
+      - env_file
+    environment:
+      - POSTGRES_HOST=db
+    restart: on-failure
+    depends_on:
+      - db
 
 # Declaring all volumes
 volumes:

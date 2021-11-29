@@ -15,7 +15,7 @@ class ContentFilter(db.Model):
 
     def __init__(self, *args, **kw):
         super(ContentFilter, self).__init__(*args, **kw)
-    
+
     def set_id(self, id):
         self.id = id
 
@@ -27,6 +27,6 @@ class ContentFilter(db.Model):
 
     def set_private(self, private):
         self.private = private
-    
+
     def serialize(self):
         return dict([(k, self.__getattribute__(k)) for k in self.SERIALIZE_LIST])

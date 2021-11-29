@@ -7,8 +7,9 @@ from swagger_server import encoder
 import os
 import connexion
 from flask_environments import Environments
-from flask_migrate import Migrate
+from flask_migrate import Migrate, MigrateCommand
 from flask_sqlalchemy import SQLAlchemy
+from flask_script import Manager
 import logging
 import json
 
@@ -60,6 +61,8 @@ def create_app():
     env = Environments(app)
     env.from_object(config_object)
 
+    manager = Manager(app)
+
     # registering db
     db = SQLAlchemy(
         app=app
@@ -70,27 +73,23 @@ def create_app():
     from swagger_server.models_db import ContentFilter
 
     # checking the environment
+
+    # we need to populate the db
+
+    # checking the environment
+    # we need to populate the db
+    migrate = Migrate(
+        app=app,
+        db=db
+    )
+    manager.add_command('db', MigrateCommand)
+
     if flask_env == 'testing':
         # we need to populate the db
         db.create_all()
 
     # registering to api app all specifications
     register_specifications(api_app)
-
-    with app.app_context():
-        q = db.session.query(ContentFilter).filter(ContentFilter.name == 'Default')
-        content_filter = q.first()
-        if content_filter is None:
-            default_content_filter = ContentFilter()
-            default_content_filter.name = 'Default'
-            default_content_filter.id = 1
-            default_content_filter.private = False
-            word_list = []
-            word_list.append("ciao")
-            default_content_filter.words = json.dumps(word_list)
-            db.session.add(default_content_filter)
-            db.session.commit()
-
 
     return app
 

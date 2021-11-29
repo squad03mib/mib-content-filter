@@ -16,10 +16,11 @@ class TestContentFilterController(BaseTestCase):
     def test_mib_resources_users_get_content_filter(self):
         """Test case for mib_resources_users_get_content_filter
 
-        
+
         """
         response = self.client.open(
-            '/users/{user_id}/content_filter/{filter_id}'.format(user_id=789, filter_id=789),
+            '/users/{user_id}/content_filter/{filter_id}'.format(
+                user_id=789, filter_id=789),
             method='GET')
         self.assert200(response,
                        'Response body is : ' + response.data.decode('utf-8'))
@@ -27,7 +28,7 @@ class TestContentFilterController(BaseTestCase):
     def test_mib_resources_users_get_content_filters_list(self):
         """Test case for mib_resources_users_get_content_filters_list
 
-        
+
         """
         response = self.client.open(
             '/users/{user_id}/content_filter'.format(user_id=789),
@@ -41,7 +42,8 @@ class TestContentFilterController(BaseTestCase):
         Set the content filter flag to activate/disactivate it
         """
         response = self.client.open(
-            '/users/{user_id}/content_filter/{filter_id}'.format(user_id=789, filter_id=789),
+            '/users/{user_id}/content_filter/{filter_id}'.format(
+                user_id=789, filter_id=789),
             method='PUT')
         self.assert200(response,
                        'Response body is : ' + response.data.decode('utf-8'))

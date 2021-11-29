@@ -2,7 +2,7 @@
 # Flask Configuration
 #
 #------------------------
-FLASK_ENV=testing
+FLASK_ENV= production
 
 #
 # Postgres configuration
@@ -12,5 +12,5 @@ FLASK_ENV=testing
 # POSTGRES_HOST=
 #
 POSTGRES_PASSWORD=abcd
-POSTGRES_USER=mib_users_ms
-POSTGRES_DB=mib_users_ms
+POSTGRES_USER=mib_content_filter_ms
+POSTGRES_DB=mib_content_filter_ms
