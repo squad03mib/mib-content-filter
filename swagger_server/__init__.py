@@ -13,6 +13,7 @@ from flask_script import Manager
 import logging
 import json
 
+
 __version__ = '0.1'
 
 db = None
@@ -71,6 +72,7 @@ def create_app():
     # requiring the list of models
     import swagger_server.models_db
     from swagger_server.models_db import ContentFilter
+    from swagger_server.dao.content_filter_manager import ContentFilterManager
 
     # checking the environment
 
@@ -90,6 +92,18 @@ def create_app():
 
     # registering to api app all specifications
     register_specifications(api_app)
+
+    with app.app_context():
+        q = ContentFilter.query.filter(ContentFilter.filter_name == 'Default')
+        content_filter = q.first()
+        if content_filter is None:
+            default_content_filter = ContentFilter()
+            default_content_filter.filter_name = 'Default'
+            default_content_filter.filter_private = False
+            word_list = ["ciao", "hello"]
+            word_list.sort(key=lambda el: len(el))
+            default_content_filter.filter_words = json.dumps(word_list)
+            ContentFilterManager.create_content_filter(default_content_filter)
 
     return app
 
