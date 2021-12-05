@@ -1,6 +1,6 @@
 from swagger_server import db
-from sqlalchemy import ForeignKey
-
+from sqlalchemy import ForeignKey, event
+import json
 
 class ContentFilter(db.Model):
 

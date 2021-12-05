@@ -2,7 +2,7 @@
 # Message in A bottle Docker Compose file
 #
 
-version: "3.6"
+version: "3.9"
 
 services:
   db:
@@ -26,14 +26,14 @@ services:
         dockerfile: Dockerfile
 
     ports:
-      - "5000:5000"
+      - "5001:5001"
     env_file:
       - env_file
     environment:
       - POSTGRES_HOST=db
     depends_on:
       - db
-      - migration
+      - migrations
     
   migrations:
     #
