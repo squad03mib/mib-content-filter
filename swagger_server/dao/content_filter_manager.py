@@ -12,7 +12,7 @@ class ContentFilterManager(Manager):
     @staticmethod
     def retrieve_by_id(id_):
         Manager.check_none(id=id_)
-        return ContentFilter.query.get(id_)
+        return ContentFilter.query.filter(ContentFilter.filter_id == id_)
 
     @staticmethod
     def retrieve_by_id_and_user(user_id, id_):
@@ -34,10 +34,7 @@ class ContentFilterManager(Manager):
         Manager.update()
         return content_filter
 
-    @staticmethod
-    def update_content_filter_info():
-        Manager.update()
-
+'''
     @staticmethod
     def delete_content_filter_info(content_filter: ContentFilter):
         Manager.delete(content_filter=content_filter)
@@ -46,3 +43,4 @@ class ContentFilterManager(Manager):
     def delete_content_filter_by_id(id_: int):
         cf = ContentFilterManager.retrieve_by_id(filter_id=id_)
         ContentFilterManager.delete_lottery_info(cf)
+'''

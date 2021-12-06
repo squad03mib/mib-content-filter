@@ -62,6 +62,9 @@ def mib_resources_users_set_content_filter(user_id, filter_id):  # noqa: E501
     content_filter = ContentFilterManager.retrieve_by_id_and_user(
         user_id, filter_id).first()
     if content_filter is None:
+        check_filter = ContentFilterManager.retrieve_by_id(filter_id).first()
+        if check_filter is None:
+            return jsonify({"message": "No content filter found"}), 404
         new_user_content_filter = UserContentFilter_db()
         new_user_content_filter.filter_id = filter_id
         new_user_content_filter.filter_id_user = user_id

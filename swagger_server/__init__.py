@@ -3,7 +3,6 @@
 
 import connexion
 
-from swagger_server import encoder
 import os
 import connexion
 from flask_environments import Environments
@@ -98,7 +97,11 @@ def create_app():
             default_content_filter = ContentFilter()
             default_content_filter.filter_name = 'Default'
             default_content_filter.filter_private = False
-            word_list = ["ciao", "hello"]
+            word_list = []
+            file1 = open('swagger_server/badwords.txt', 'r')
+            Lines = file1.readlines()
+            for line in Lines:
+                word_list.append(line.strip())
             word_list.sort(key=lambda el: len(el))
             default_content_filter.filter_words = json.dumps(word_list)
             ContentFilterManager.create_content_filter(default_content_filter)

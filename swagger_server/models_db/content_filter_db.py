@@ -17,18 +17,6 @@ class ContentFilter(db.Model):
     def __init__(self, *args, **kw):
         super(ContentFilter, self).__init__(*args, **kw)
 
-    def set_id(self, id):
-        self.filter_id = id
-
-    def set_name(self, name):
-        self.filter_name = name
-
-    def set_words(self, words):
-        self.filter_words = words
-
-    def set_private(self, private):
-        self.filter_private = private
-
     def serialize(self):
         return dict([(k, self.__getattribute__(k)) for k in self.SERIALIZE_LIST])
 
