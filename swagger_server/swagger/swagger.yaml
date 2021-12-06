@@ -28,7 +28,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ContentFilter'
+                type: array
+                items:
+                  $ref: '#/components/schemas/ContentFilter'
+                x-content-type: application/json
         default:
           description: An error occured during retrieving the list of content filters
       x-openapi-router-controller: swagger_server.controllers.content_filter_controller
@@ -91,6 +94,13 @@ paths:
         schema:
           type: integer
           format: int64
+      requestBody:
+        description: Create a new message and send it
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContentFilterInfoPUT'
+        required: true
       responses:
         "200":
           description: Return content filter info
@@ -100,6 +110,40 @@ paths:
                 $ref: '#/components/schemas/ContentFilterInfo'
         default:
           description: An error occured during setting content filter
+      x-openapi-router-controller: swagger_server.controllers.content_filter_controller
+  /users/{user_id}/content_filter/purify_message:
+    post:
+      tags:
+      - Content Filter
+      description: Purify a message
+      operationId: mib_resources_users_purify_message
+      parameters:
+      - name: user_id
+        in: path
+        description: User Unique ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        description: Create a new message and send it
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PurifyMessage'
+        required: true
+      responses:
+        "200":
+          description: Return the purified message text according to active content
+            filters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PurifyMessage'
+        default:
+          description: An error occured during purifying the message
       x-openapi-router-controller: swagger_server.controllers.content_filter_controller
 components:
   schemas:
@@ -150,12 +194,34 @@ components:
           type: array
           description: list of badwords
           items:
-            example: "fuck, shit"
+            example: fuck
       example:
         filter_name: Default
         filter_active: false
         filter_id: 0
         filter_words:
-        - "fuck, shit"
-        - "fuck, shit"
+        - fuck
+        - shit
+    ContentFilterInfoPUT:
+      required:
+      - filter_active
+      type: object
+      properties:
+        filter_active:
+          type: boolean
+          description: status of the content filter
+          example: false
+      example:
+        filter_active: false
+    PurifyMessage:
+      required:
+      - text
+      type: object
+      properties:
+        text:
+          type: string
+          description: text of the message
+          example: Hi!
+      example:
+        text: Hi!
 

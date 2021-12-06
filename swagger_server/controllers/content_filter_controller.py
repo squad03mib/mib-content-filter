@@ -4,6 +4,8 @@ from flask import json, jsonify
 
 from swagger_server.models.content_filter import ContentFilter  # noqa: E501
 from swagger_server.models.content_filter_info import ContentFilterInfo  # noqa: E501
+from swagger_server.models.content_filter_info_put import ContentFilterInfoPUT  # noqa: E501
+from swagger_server.models.purify_message import PurifyMessage  # noqa: E501
 from swagger_server.dao.content_filter_manager import ContentFilterManager
 from swagger_server import util
 from swagger_server.models_db.content_filter_db import ContentFilter as ContentFilter_db, UserContentFilter as UserContentFilter_db  # noqa: E501
@@ -47,11 +49,30 @@ def mib_resources_users_get_content_filters_list(user_id):  # noqa: E501
     return ContentFilter.from_dict(response_object[0].serialize() | response_object[1].serialize()).to_dict()
 
 
-def mib_resources_users_set_content_filter(user_id, filter_id):  # noqa: E501
+def mib_resources_users_purify_message(body, user_id):  # noqa: E501
+    """mib_resources_users_purify_message
+
+    Purify a message # noqa: E501
+
+    :param body: Create a new message and send it
+    :type body: dict | bytes
+    :param user_id: User Unique ID
+    :type user_id: int
+
+    :rtype: PurifyMessage
+    """
+    if connexion.request.is_json:
+        body = PurifyMessage.from_dict(connexion.request.get_json())  # noqa: E501
+    return 'do some magic!'
+
+
+def mib_resources_users_set_content_filter(body, user_id, filter_id):  # noqa: E501
     """Set the content filter flag to activate/disactivate it
 
      # noqa: E501
 
+    :param body: Create a new message and send it
+    :type body: dict | bytes
     :param user_id: User Unique ID
     :type user_id: int
     :param filter_id: Filter Unique ID
@@ -59,6 +80,9 @@ def mib_resources_users_set_content_filter(user_id, filter_id):  # noqa: E501
 
     :rtype: ContentFilterInfo
     """
+    if connexion.request.is_json:
+        body = ContentFilterInfoPUT.from_dict(connexion.request.get_json())  # noqa: E501
+    
     content_filter = ContentFilterManager.retrieve_by_id_and_user(
         user_id, filter_id).first()
     if content_filter is None:
