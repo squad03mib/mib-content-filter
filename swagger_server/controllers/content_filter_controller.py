@@ -83,9 +83,33 @@ def mib_resources_users_set_content_filter(body, user_id, filter_id):  # noqa: E
     if connexion.request.is_json:
         body = ContentFilterInfoPUT.from_dict(connexion.request.get_json())  # noqa: E501
     
-    content_filter = ContentFilterManager.retrieve_by_id_and_user(
-        user_id, filter_id).first()
+    content_filter :ContentFilter_db = ContentFilterManager.V2_get_filter_by_id(
+        filter_id)
+    
+    user_content_filter :UserContentFilter_db = ContentFilterManager.V2_get_user_filter(filter_id, user_id)
+
+    if content_filter.filter_private and user_content_filter is None:
+        abort(403)
+
     if content_filter is None:
+        abort(404)
+    
+    if user_content_filter is None and body.filter_active:
+        user_content_filter = UserContentFilter_db()
+        user_content_filter.filter_id = filter_id
+        user_content_filter.filter_id_user = user_id
+        user_content_filter.filter_active = body.filter_active
+        ContentFilterManager.create_content_filter(user_content_filter)
+    elif user_content_filter is not None:
+        ContentFilterManager.V2_set_user_filter_status(user_content_filter, body.filter_active)
+
+    return ContentFilterInfo.from_dict(content_filter.serialize() | user_content_filter.serialize()).to_dict()
+
+
+
+
+
+
         check_filter = ContentFilterManager.retrieve_by_id(filter_id).first()
         if check_filter is None:
             return jsonify({"message": "No content filter found"}), 404

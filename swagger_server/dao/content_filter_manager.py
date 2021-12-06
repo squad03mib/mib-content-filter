@@ -33,6 +33,19 @@ class ContentFilterManager(Manager):
             content_filter.filter_active = True
         Manager.update()
         return content_filter
+    
+    def V2_get_filter_by_id(id_):
+        Manager.check_none(id=id_)
+        return db.session.query(ContentFilter).filter(ContentFilter.filter_id==id_).first()
+    
+    def V2_get_user_filter(filter_id, user_id):
+        return db.session.query(UserContentFilter).filter(UserContentFilter.filter_id==filter_id,
+            UserContentFilter.filter_id_user==user_id).first()
+    
+    def V2_set_user_filter_status(user_content_filter :UserContentFilter, active :bool):
+        user_content_filter.filter_active = active
+        Manager.update()
+        return user_content_filter
 
 '''
     @staticmethod
