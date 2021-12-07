@@ -107,4 +107,6 @@ def mib_resources_users_set_content_filter(body, user_id, filter_id):  # noqa: E
     elif user_content_filter is not None:
         ContentFilterManager.V2_set_user_filter_status(user_content_filter, body.filter_active)
     content_filter.filter_words = json.loads(content_filter.filter_words)
-    return ContentFilterInfo.from_dict(user_content_filter.serialize()).to_dict()
+    
+    mixed = (user_content_filter.serialize() | content_filter.serialize()) if user_content_filter is not None else content_filter.serialize()
+    return ContentFilterInfo.from_dict(mixed).to_dict()

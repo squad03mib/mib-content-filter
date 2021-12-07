@@ -14,7 +14,7 @@ class ContentFilterInfo(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, filter_id: int=None, filter_name: str=None, filter_active: bool=None, filter_words: List[object]=None):  # noqa: E501
+    def __init__(self, filter_id: int=None, filter_name: str=None, filter_active: bool=False, filter_words: List[object]=None):  # noqa: E501
         """ContentFilterInfo - a model defined in Swagger
 
         :param filter_id: The filter_id of this ContentFilterInfo.  # noqa: E501
