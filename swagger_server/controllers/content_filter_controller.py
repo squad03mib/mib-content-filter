@@ -83,7 +83,10 @@ def mib_resources_users_purify_message(body, user_id):  # noqa: E501
             insensitive_word = re.compile(re.escape(word), re.IGNORECASE)
             purified_message = insensitive_word.sub('*' * len(word), purified_message)
 
-    return purified_message
+    purify_message :PurifyMessage = PurifyMessage()
+    purify_message.text = purified_message
+
+    return purify_message.to_dict()
 
 
 def mib_resources_users_set_content_filter(body, user_id, filter_id):  # noqa: E501
