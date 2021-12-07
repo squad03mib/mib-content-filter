@@ -42,15 +42,22 @@ def mib_resources_users_get_content_filters_list(user_id):  # noqa: E501
     :param user_id: User Unique ID
     :type user_id: int
 
-    :rtype: ContentFilter
+    :rtype: List[ContentFilter]
     """
     results = ContentFilterManager.retrieve_list_by_user_id(user_id)
     content_list = []
     for result in results:
-        content_list.append(ContentFilterInfo.from_dict({'filter_id':result.ContentFilter.filter_id,'filter_name':result.ContentFilter.filter_name,'filter_active':True if result.UserContentFilter and
-                                    result.UserContentFilter.filter_active else False}).to_dict())
+        user_content_filter :UserContentFilter_db = result.UserContentFilter
+        content_filter :ContentFilter_db = result.ContentFilter
+
+        content_filter.filter_words = []
+        mixed = (user_content_filter.serialize() | content_filter.serialize()) if user_content_filter is not None else content_filter.serialize()
+        
+        content_list.append(ContentFilter.from_dict(mixed).to_dict())
+        #content_list.append(ContentFilterInfo.from_dict({'filter_id':result.ContentFilter.filter_id,'filter_name':result.ContentFilter.filter_name,'filter_active':True if result.UserContentFilter and
+        #                            result.UserContentFilter.filter_active else False}).to_dict())
     
-    return jsonify(content_list)
+    return content_list
 
 def mib_resources_users_purify_message(body, user_id):  # noqa: E501
     """mib_resources_users_purify_message
