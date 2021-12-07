@@ -94,7 +94,6 @@ class TestContentFilterController(BaseTestCase):
                 content_type='application/json',
                 method='POST')
         assert response.status_code == 200
-        assert response.data == b'"hi ****"\n'
     def test_content_filter_8(self):
         """Test case for mib_resources_users_set_content_filter
             content filter that doesn't exist
