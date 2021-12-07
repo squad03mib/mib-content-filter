@@ -10,7 +10,7 @@ from swagger_server.models.purify_message import PurifyMessage  # noqa: E501
 from swagger_server.dao.content_filter_manager import ContentFilterManager
 from swagger_server import util
 from swagger_server.models_db.content_filter_db import ContentFilter as ContentFilter_db, UserContentFilter as UserContentFilter_db  # noqa: E501
-
+import re
 
 def mib_resources_users_get_content_filter(user_id, filter_id):  # noqa: E501
     """mib_resources_users_get_content_filter
@@ -26,13 +26,13 @@ def mib_resources_users_get_content_filter(user_id, filter_id):  # noqa: E501
     """
     content_filter = ContentFilterManager.V2_get_filter_by_id(filter_id)
     user_content_filter = ContentFilterManager.V2_get_user_filter(filter_id, user_id)
-    content_filter.filter_words = json.loads(content_filter.filter_words)
     if content_filter is None:
         abort(404)
-    if user_content_filter is None:
-        return ContentFilterInfo.from_dict(content_filter.serialize() | dict(filter_active = False)).to_dict()
+    content_filter.filter_words = json.loads(content_filter.filter_words)
+    mixed = (user_content_filter.serialize() | content_filter.serialize()) if user_content_filter is not None else content_filter.serialize()
+
     #words list is in json string format in the db. We do this for compatibility with ContentFilterInfo
-    return ContentFilterInfo.from_dict(user_content_filter.serialize()).to_dict() # content filter missing
+    return ContentFilterInfo.from_dict(mixed).to_dict() 
 
 def mib_resources_users_get_content_filters_list(user_id):  # noqa: E501
     """mib_resources_users_get_content_filters_list
@@ -73,7 +73,17 @@ def mib_resources_users_purify_message(body, user_id):  # noqa: E501
     """
     if connexion.request.is_json:
         body = PurifyMessage.from_dict(connexion.request.get_json())  # noqa: E501
-    return 'do some magic!'
+    
+    personal_filters = ContentFilterManager.retrieve_list_by_user_id(user_id)
+
+    purified_message = body.text
+
+    for personal_filter in personal_filters:
+        for word in json.loads(personal_filter.ContentFilter.filter_words):
+            insensitive_word = re.compile(re.escape(word), re.IGNORECASE)
+            purified_message = insensitive_word.sub('*' * len(word), purified_message)
+
+    return purified_message
 
 
 def mib_resources_users_set_content_filter(body, user_id, filter_id):  # noqa: E501
@@ -99,11 +109,12 @@ def mib_resources_users_set_content_filter(body, user_id, filter_id):  # noqa: E
     
     user_content_filter :UserContentFilter_db = ContentFilterManager.V2_get_user_filter(filter_id, user_id)
 
-    if content_filter.filter_private and user_content_filter is None:
-        abort(403)
-
     if content_filter is None:
         abort(404)
+
+    if content_filter.filter_private and user_content_filter is None:
+        abort(403)
+    
     
     if user_content_filter is None and body.filter_active:
         user_content_filter = UserContentFilter_db()

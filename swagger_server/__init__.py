@@ -102,7 +102,7 @@ def create_app():
             Lines = file1.readlines()
             for line in Lines:
                 word_list.append(line.strip())
-            word_list.sort(key=lambda el: len(el))
+            word_list.sort(key=lambda el: -len(el))
             default_content_filter.filter_words = json.dumps(word_list)
             ContentFilterManager.create_content_filter(default_content_filter)
 
