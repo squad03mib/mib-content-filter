@@ -7,6 +7,7 @@ from six import BytesIO
 
 from swagger_server.models.content_filter import ContentFilter  # noqa: E501
 from swagger_server.models.content_filter_info import ContentFilterInfo  # noqa: E501
+from swagger_server.models.content_filter_info_put import ContentFilterInfoPUT
 from swagger_server.test import BaseTestCase
 import unittest
 
@@ -18,7 +19,7 @@ class TestContentFilterController(BaseTestCase):
         """
         response = self.client.open(
             '/users/{user_id}/content_filter/{filter_id}'.format(
-                user_id=1, filter_id=1),
+                user_id=1, filter_id=1,data=ContentFilterInfoPUT.from_dict(dict(filter_active = True)).to_dict()),
             method='PUT')
         assert response.status_code == 200
 
@@ -80,6 +81,6 @@ class TestContentFilterController(BaseTestCase):
         """
         response = self.client.open(
             '/users/{user_id}/content_filter/{filter_id}'.format(
-                user_id=1, filter_id=1),
+                user_id=1, filter_id=1,data=json.dumps({"filter_active": False})),
             method='PUT')
         assert response.status_code == 200

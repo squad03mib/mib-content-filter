@@ -1,6 +1,7 @@
+from functools import update_wrapper
 import connexion
 import six
-from flask import json, jsonify
+from flask import json, jsonify, abort
 
 from swagger_server.models.content_filter import ContentFilter  # noqa: E501
 from swagger_server.models.content_filter_info import ContentFilterInfo  # noqa: E501
@@ -23,14 +24,15 @@ def mib_resources_users_get_content_filter(user_id, filter_id):  # noqa: E501
 
     :rtype: ContentFilterInfo
     """
-    response_object = ContentFilterManager.retrieve_by_id_and_user(
-        user_id, filter_id).first()
-    if response_object is None:
-        return jsonify({"message": "No content filter found"}), 404
-
+    content_filter = ContentFilterManager.V2_get_filter_by_id(filter_id)
+    user_content_filter = ContentFilterManager.V2_get_user_filter(filter_id, user_id)
+    content_filter.filter_words = json.loads(content_filter.filter_words)
+    if content_filter is None:
+        abort(404)
+    if user_content_filter is None:
+        return ContentFilterInfo.from_dict(content_filter.serialize() | dict(filter_active = False)).to_dict()
     #words list is in json string format in the db. We do this for compatibility with ContentFilterInfo
-    response_object[1].filter_words = json.loads(response_object[1].filter_words)
-    return ContentFilterInfo.from_dict(response_object[0].serialize() | response_object[1].serialize()).to_dict()
+    return ContentFilterInfo.from_dict(user_content_filter.serialize()).to_dict() # content filter missing
 
 def mib_resources_users_get_content_filters_list(user_id):  # noqa: E501
     """mib_resources_users_get_content_filters_list
@@ -42,12 +44,13 @@ def mib_resources_users_get_content_filters_list(user_id):  # noqa: E501
 
     :rtype: ContentFilter
     """
-    response_object = ContentFilterManager.retrieve_list_by_user_id(
-        user_id).first()
-    if response_object is None:
-        return jsonify({"message": "No content filter found"}), 404
-    return ContentFilter.from_dict(response_object[0].serialize() | response_object[1].serialize()).to_dict()
-
+    results = ContentFilterManager.retrieve_list_by_user_id(user_id)
+    content_list = []
+    for result in results:
+        content_list.append(ContentFilterInfo.from_dict({'filter_id':result.ContentFilter.filter_id,'filter_name':result.ContentFilter.filter_name,'filter_active':True if result.UserContentFilter and
+                                    result.UserContentFilter.filter_active else False}).to_dict())
+    
+    return jsonify(content_list)
 
 def mib_resources_users_purify_message(body, user_id):  # noqa: E501
     """mib_resources_users_purify_message
@@ -83,6 +86,7 @@ def mib_resources_users_set_content_filter(body, user_id, filter_id):  # noqa: E
     if connexion.request.is_json:
         body = ContentFilterInfoPUT.from_dict(connexion.request.get_json())  # noqa: E501
     
+    
     content_filter :ContentFilter_db = ContentFilterManager.V2_get_filter_by_id(
         filter_id)
     
@@ -102,26 +106,5 @@ def mib_resources_users_set_content_filter(body, user_id, filter_id):  # noqa: E
         ContentFilterManager.create_content_filter(user_content_filter)
     elif user_content_filter is not None:
         ContentFilterManager.V2_set_user_filter_status(user_content_filter, body.filter_active)
-
-    return ContentFilterInfo.from_dict(content_filter.serialize() | user_content_filter.serialize()).to_dict()
-
-
-
-
-
-
-        check_filter = ContentFilterManager.retrieve_by_id(filter_id).first()
-        if check_filter is None:
-            return jsonify({"message": "No content filter found"}), 404
-        new_user_content_filter = UserContentFilter_db()
-        new_user_content_filter.filter_id = filter_id
-        new_user_content_filter.filter_id_user = user_id
-        new_user_content_filter.filter_active = True
-        ContentFilterManager.create_content_filter(
-            new_user_content_filter)
-        content_filter = ContentFilterManager.retrieve_by_id_and_user(
-        user_id, filter_id).first()
-    else:
-        ContentFilterManager.toggle_content_filter(user_id,filter_id)
-    content_filter[1].filter_words = json.loads(content_filter[1].filter_words)
-    return ContentFilterInfo.from_dict(content_filter[0].serialize() | content_filter[1].serialize()).to_dict()
+    content_filter.filter_words = json.loads(content_filter.filter_words)
+    return ContentFilterInfo.from_dict(user_content_filter.serialize()).to_dict()

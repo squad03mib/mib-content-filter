@@ -22,7 +22,7 @@ class ContentFilterManager(Manager):
     @staticmethod
     def retrieve_list_by_user_id(user_id):
         Manager.check_none(user_id=user_id)
-        return db.session.query(UserContentFilter,ContentFilter).filter(ContentFilter.filter_id == UserContentFilter.filter_id).filter(UserContentFilter.filter_id_user == user_id)
+        return db.session.query(ContentFilter,UserContentFilter).filter(ContentFilter.filter_id==UserContentFilter.filter_id, UserContentFilter.filter_id_user==user_id).join(UserContentFilter,isouter=True).union_all(db.session.query(ContentFilter,UserContentFilter).filter(ContentFilter.filter_private.is_(False)).join(UserContentFilter,isouter=True))
 
     def toggle_content_filter(user_id,id_):
         Manager.check_none(id=id_)
@@ -34,6 +34,8 @@ class ContentFilterManager(Manager):
         Manager.update()
         return content_filter
     
+    
+
     def V2_get_filter_by_id(id_):
         Manager.check_none(id=id_)
         return db.session.query(ContentFilter).filter(ContentFilter.filter_id==id_).first()
@@ -45,8 +47,7 @@ class ContentFilterManager(Manager):
     def V2_set_user_filter_status(user_content_filter :UserContentFilter, active :bool):
         user_content_filter.filter_active = active
         Manager.update()
-        return user_content_filter
-
+    
 '''
     @staticmethod
     def delete_content_filter_info(content_filter: ContentFilter):
