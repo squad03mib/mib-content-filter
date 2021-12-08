@@ -1,3 +1,5 @@
+[![squad03mib](https://circleci.com/gh/squad03mib/mib-content-filter.svg?style=svg)](https://app.circleci.com/pipelines/github/squad03mib/mib-content-filter)
+[![codecov](https://codecov.io/gh/squad03mib/mib-content-filter/branch/main/graph/badge.svg?token=Z6V4Q5M1ZP)](https://codecov.io/gh/squad03mib/mib-content-filter)
 # Message in A Bottle - Content Filter
 
 This is the source code of Message in a Bottle Content Filter microservice, self project of _Advanced Software Engineering_ course, University of Pisa.
