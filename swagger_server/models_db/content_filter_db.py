@@ -11,7 +11,7 @@ class ContentFilter(db.Model):
 
     filter_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     filter_name = db.Column(db.Unicode(128))
-    filter_words = db.Column(db.Unicode(128))
+    filter_words = db.Column(db.Text)
     filter_private = db.Column(db.Boolean, default=False)
 
     def __init__(self, *args, **kw):

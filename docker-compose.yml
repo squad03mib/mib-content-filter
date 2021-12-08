@@ -9,7 +9,7 @@ services:
     image: postgres:13
     restart: unless-stopped
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql/db_content_filter/data
     ports:
       # this is only for development purpose
       - "5342:5342"

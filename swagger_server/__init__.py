@@ -91,6 +91,8 @@ def create_app():
     # registering to api app all specifications
     register_specifications(api_app)
 
+    return app
+
     with app.app_context():
         q = ContentFilter.query.filter(ContentFilter.filter_name == 'Default')
         content_filter = q.first()
