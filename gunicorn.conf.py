@@ -6,7 +6,7 @@ WSGI server of mib-api-gateway microservice.
 """
 
 # the bind address
-bind = '0.0.0.0:5001'
+bind = '0.0.0.0:5005'
 backlog = 2048
 
 #
