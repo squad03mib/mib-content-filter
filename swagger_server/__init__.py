@@ -84,17 +84,12 @@ def create_app():
         db=db
     )
     manager.add_command('db', MigrateCommand)
-    
+
     if flask_env == 'testing':
         db.create_all()
-
-    # registering to api app all specifications
-    register_specifications(api_app)
-
-    return app
-
-    with app.app_context():
-        q = ContentFilter.query.filter(ContentFilter.filter_name == 'Default')
+        with app.app_context():
+            q = ContentFilter.query.filter(
+                ContentFilter.filter_name == 'Default')
         content_filter = q.first()
         if content_filter is None:
             default_content_filter = ContentFilter()
@@ -108,6 +103,8 @@ def create_app():
             word_list.sort(key=lambda el: -len(el))
             default_content_filter.filter_words = json.dumps(word_list)
             ContentFilterManager.create_content_filter(default_content_filter)
+    # registering to api app all specifications
+    register_specifications(api_app)
 
     return app
 
