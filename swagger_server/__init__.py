@@ -85,7 +85,8 @@ def create_app():
     )
     manager.add_command('db', MigrateCommand)
     
-    db.create_all()
+    if flask_env == 'testing':
+        db.create_all()
 
     # registering to api app all specifications
     register_specifications(api_app)
