@@ -1,4 +1,5 @@
 from functools import update_wrapper
+from typing import List
 import connexion
 import six
 from flask import json, jsonify, abort
@@ -79,9 +80,10 @@ def mib_resources_users_purify_message(body, user_id):  # noqa: E501
     purified_message = body.text
 
     for personal_filter in personal_filters:
-        for word in json.loads(personal_filter.ContentFilter.filter_words):
-            insensitive_word = re.compile(re.escape(word), re.IGNORECASE)
-            purified_message = insensitive_word.sub('*' * len(word), purified_message)
+        if personal_filter.UserContentFilter.filter_active:
+            for word in json.loads(personal_filter.ContentFilter.filter_words):
+                insensitive_word = re.compile(re.escape(word), re.IGNORECASE)
+                purified_message = insensitive_word.sub('*' * len(word), purified_message)
 
     purify_message :PurifyMessage = PurifyMessage()
     purify_message.text = purified_message
