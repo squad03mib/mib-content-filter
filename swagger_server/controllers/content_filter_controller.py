@@ -80,7 +80,8 @@ def mib_resources_users_purify_message(body, user_id):  # noqa: E501
     purified_message = body.text
 
     for personal_filter in personal_filters:
-        if personal_filter.UserContentFilter.filter_active:
+        if personal_filter.UserContentFilter is not None and\
+           personal_filter.UserContentFilter.filter_active:
             for word in json.loads(personal_filter.ContentFilter.filter_words):
                 insensitive_word = re.compile(re.escape(word), re.IGNORECASE)
                 purified_message = insensitive_word.sub('*' * len(word), purified_message)
